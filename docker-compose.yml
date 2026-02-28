@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: vaultforge-postgres
+    environment:
+      POSTGRES_DB: vaultforge
+      POSTGRES_USER: vaultforge
+      POSTGRES_PASSWORD: vaultforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - vf_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vaultforge -d vaultforge"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mongo:
+    image: mongo:7
+    container_name: vaultforge-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - vf_mongo_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  vf_pg_data:
+  vf_mongo_data:
